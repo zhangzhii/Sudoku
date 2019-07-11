@@ -1,0 +1,8 @@
+
+log/
+
+\.idea/
+
+gui/__pycache__/
+
+utility/__pycache__/
