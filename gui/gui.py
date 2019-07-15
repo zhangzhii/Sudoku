@@ -43,8 +43,10 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
         self.grid.sort(key=custom_sort)  # reorder the list by widget name
         self.confirm_Button.clicked.connect(self.onClickedConfirmButton)
         self.reset_Button.clicked.connect(self.onClickedResetButton)
+        self.new_Button.clicked.connect(self.onClickedNewGameButton)
 
     def onClickedResetButton(self):
+        logger.info("clear ~")
         for widget in self.grid:
             if widget.isEnabled():
                 widget.clear()
@@ -60,9 +62,9 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                 break
         for i in range(81):
             self.grid[i].setText(str(new_grid[i]))
+        logger.info("full grid created:")
         for i in range(9):
-            print(new_grid[i*9 : i*9+9])
-        print("done!")
+            logger.info(str(new_grid[9*i:9*i+9]))
 
     def onClickedConfirmButton(self):
         logger.info("start solving...")
@@ -84,6 +86,9 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
             numbers = self.solve_grid(numbers)
             if self.check_grid(numbers):
                 break
+        logger.info("solved:")
+        for i in range(9):
+            logger.info(str(numbers[9 * i:9 * i + 9]))
 
     def fill_grid(self, grid):
         numbers = grid
@@ -112,9 +117,6 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                                 numbers[i] = value
                                 return numbers
                 break
-        for i in range(9):
-            print(numbers[i*9 : i*9+9])
-        print("========================= ", self.fill_tracking_index[-1])
         del self.fill_tracking_index[-1]
         del self.fill_tracking_value[-1]
         numbers[self.fill_tracking_index[-1]] = 0
@@ -155,8 +157,8 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
         if 0 in grid:
             return False
         else:
-            logger.info("done!")
             return True
+
 
 def custom_sort(t):
     return int(str(t.objectName())[4:])
