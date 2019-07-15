@@ -50,7 +50,6 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                 widget.clear()
 
     def onClickedNewGameButton(self):
-        shuffle(NUMBER_LIST)
         for widget in self.grid:
             widget.clear()
             widget.setEnabled(True)
@@ -94,12 +93,13 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
             if numbers[i] == 0:
                 if i not in self.fill_tracking_index:
                     self.fill_tracking_index.append(i)
-                    self.fill_tracking_value.append(0)
+                    self.fill_tracking_value.append([])
+                shuffle(NUMBER_LIST)
                 for value in NUMBER_LIST:
-                    if i == self.fill_tracking_index[-1] and self.fill_tracking_value[-1] != 0 and \
-                            NUMBER_LIST.index(value) <= NUMBER_LIST.index(self.fill_tracking_value[-1]):
+                    if i == self.fill_tracking_index[-1] and self.fill_tracking_value[-1] != [] and \
+                            value in self.fill_tracking_value[-1]:
                         continue
-                    self.fill_tracking_value[-1] = value
+                    self.fill_tracking_value[-1].append(value)
                     if value not in numbers[9*row : 9*row+9]:
                         col_nums = [numbers[col], numbers[9+col], numbers[2*9+col], numbers[3*9+col], numbers[4*9+col],
                                     numbers[5*9+col], numbers[6*9+col], numbers[7*9+col], numbers[8*9+col]]
