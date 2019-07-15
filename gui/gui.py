@@ -3,7 +3,7 @@ from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from gui.sudoku_grid import Ui_MainWindow
 import logging
-import time
+
 
 TEST_GRID = [3, 0, 6,   5, 0, 8,   4, 0, 0,
              5, 2, 0,   0, 0, 0,   0, 0, 0,
@@ -18,6 +18,7 @@ TEST_GRID = [3, 0, 6,   5, 0, 8,   4, 0, 0,
              0, 0, 5,   2, 0, 6,   3, 0, 0]
 
 logger = logging.getLogger(__name__)
+DEBUG_MODE = True
 
 
 class SudokuMaster(QMainWindow, Ui_MainWindow):
@@ -46,17 +47,20 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
 
     def onClickedConfirmButton(self):
         logger.info("start solving...")
-        numbers = TEST_GRID
-        for i in range(81):
-            if numbers[i] != 0:
-                self.grid[i].setText(str(numbers[i]))
-                self.grid[i].setEnabled(False)
-        # for widget in self.grid:
-        #     if widget.text() != "":
-        #         widget.setEnabled(False)
-        #         numbers.append(int(widget.text()))
-        #     else:
-        #         numbers.append(0)
+        if DEBUG_MODE:
+            numbers = TEST_GRID
+            for i in range(81):
+                if numbers[i] != 0:
+                    self.grid[i].setText(str(numbers[i]))
+                    self.grid[i].setEnabled(False)
+        else:
+            numbers = []
+            for widget in self.grid:
+                if widget.text() != "":
+                    widget.setEnabled(False)
+                    numbers.append(int(widget.text()))
+                else:
+                    numbers.append(0)
         while True:
             numbers = self.solve_grid(numbers)
             if self.check_grid(numbers):
