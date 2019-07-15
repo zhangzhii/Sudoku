@@ -45,6 +45,7 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
             widget.setEnabled(True)
 
     def onClickedConfirmButton(self):
+        logger.info("start solving...")
         numbers = TEST_GRID
         for i in range(81):
             if numbers[i] != 0:
@@ -87,24 +88,16 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                                 self.grid[i].setText(str(value))
                                 return numbers
                 break  # not valid for all 9 values
-        for i in range(9):
-            print(numbers[i*9 : i*9+9])
-        print("======================== ", self.tracking_index[-1], numbers[self.tracking_index[-1]])
-        # time.sleep(0.5)
         del self.tracking_index[-1]
         del self.tracking_value[-1]
         numbers[self.tracking_index[-1]] = 0
         return numbers
 
     def check_grid(self, grid):
-        # logger.info(str(grid))
         if 0 in grid:
-            # logger.info("not yet...")
             return False
         else:
             logger.info("done!")
-            for i in range(9):
-                print(grid[i*9 : i*9+9])
             return True
 
 def custom_sort(t):
