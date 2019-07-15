@@ -9,5 +9,6 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     app = QApplication(sys.argv)
     win = gui.SudokuMaster()
-    win.show()
+    # win.show()
+    win.onClickedConfirmButton()
     sys.exit(app.exec_())
