@@ -20,7 +20,7 @@ TEST_GRID = [3, 0, 6,   5, 0, 8,   4, 0, 0,
 NUMBER_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 INDEX_LIST = list(i for i in range(0, 81))
 logger = logging.getLogger(__name__)
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 
 class SudokuMaster(QMainWindow, Ui_MainWindow):
