@@ -65,8 +65,6 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
             new_grid = self.fill_grid(new_grid)
             if self.check_grid(new_grid):
                 break
-        for i in range(81):
-            self.grid[i].setText(str(new_grid[i]))
         logger.info("full grid created:")
         for i in range(9):
             logger.info(str(new_grid[9*i:9*i+9]))
@@ -140,9 +138,6 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                 self.solve_tracking_index.clear()
                 self.solve_tracking_value.clear()
                 numbers[i] = 0
-                for j in range(9):
-                    print(numbers[j * 9: j * 9 + 9])
-                print("============================= ", i, len(self.remove_tracking_index))
                 grid_for_validate = numbers.copy()
                 while True:
                     grid_for_validate = self.validate_grid(grid_for_validate)
@@ -150,11 +145,14 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                         break
                     elif self.check_grid(grid_for_validate):
                         numbers[i] = self.remove_tracking_value[-1]
-                        print("not allow ", i, self.remove_tracking_value[-1])
                         break
-        print("new puzzle created! ")
+        logger.info("new puzzle created! ")
         for i in range(9):
-            print(numbers[i*9: i*9+9])
+            logger.info(str(numbers[i*9: i*9+9]))
+        for i in range(81):
+            if numbers[i] != 0:
+                self.grid[i].setText(str(numbers[i]))
+                self.grid[i].setEnabled(False)
 
     def validate_grid(self, grid):
         numbers = grid
@@ -183,7 +181,6 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
                                            numbers[x + 18], numbers[x + 19], numbers[x + 20]]
                             if value not in square_item:
                                 numbers[i] = value
-                                self.grid[i].setText(str(value))
                                 return numbers
                 break  # not valid for all 9 values
         del self.solve_tracking_index[-1]
