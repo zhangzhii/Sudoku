@@ -8,3 +8,5 @@ gui/__pycache__/
 utility/__pycache__/
 
 algorithm/__pycache__/
+
+\.vscode/
