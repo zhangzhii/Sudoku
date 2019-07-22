@@ -25,15 +25,16 @@ class Solver(QThread):
             # possible answer 0-9, 0 for impossible, 1 for possible
 
     def run(self):
-        solution = self.solve_puzzle(self.puzzle)
+        solution = self.solve_puzzle(self.puzzle, self.possibilities)
         if solution:
             for i in range(9):
                 print(solution[i*9 : i*9+9])
         print("done!")
         # self.puzzle_solved_signal.emit(solution)
 
-    def solve_puzzle(self, puzzle):
+    def solve_puzzle(self, puzzle, poss_grid):
         grid = puzzle.copy()
+        possibilities = poss_grid.copy()
         puzzle_solved = False
         impossible_puzzle = False
         freedomcheck_needed = False
@@ -46,17 +47,18 @@ class Solver(QThread):
             for i in range(81):
                 if grid[i] == 0:
                     puzzle_solved = False
-                    reduction = self.reduce_possibilities(grid, i)
+                    reduction, result = self.reduce_possibilities(grid, i, possibilities[i])
                     if reduction:
-                        print("{} reduction result: {}, {}".format(i, reduction, self.possibilities[i]))
+                        possibilities[i] = result
+                        print("{} reduction result: {}, {}".format(i, reduction, possibilities[i]))
                         possibilities_updated = True
                     poss_value = 0
                     remaining = 0
                     for value in range(1, 10):
-                        if self.possibilities[i][value] == 1:
+                        if possibilities[i][value] == 1:
                             poss_value = value
                             remaining += 1
-                    print("{} remaining {}, {}".format(i, remaining, self.possibilities[i]))
+                    print("{} remaining {}, {}".format(i, remaining, possibilities[i]))
                     if remaining == 0:
                         impossible_puzzle = True
                         print("{} remaining = 0, quit!".format(i))
@@ -69,7 +71,7 @@ class Solver(QThread):
                         possibilities_updated = True
                         continue
                     if freedomcheck_needed:
-                        solution = self.check_freedoms(self.possibilities, i)
+                        solution = self.check_freedoms(possibilities, i)
                         if len(solution) == 1:
                             for index in range(9):
                                 print(grid[index * 9: index * 9 + 9])
@@ -88,7 +90,7 @@ class Solver(QThread):
                 break
             elif not (possibilities_updated or puzzle_solved):
                 if freedomcheck_needed:
-                    return self.solve_by_guessing(grid, least_free_indexes)
+                    return self.solve_by_guessing(grid, least_free_indexes, possibilities)
                 else:
                     freedomcheck_needed = True
             print("round {}, update={}, solved={}, impossible={}".format(i, possibilities_updated, puzzle_solved, impossible_puzzle))
@@ -97,20 +99,21 @@ class Solver(QThread):
         else:
             return grid
 
-    def solve_by_guessing(self, puzzle, least_free_indexes):
+    def solve_by_guessing(self, puzzle, least_free_indexes, poss_grid):
         grid = puzzle.copy()
-        # guess_index = choice(least_free_indexes)
-        guess_index = least_free_indexes[0]
+        possibilities = poss_grid.copy()
+        guess_index = choice(least_free_indexes)
+        # guess_index = least_free_indexes[0]
         guess_values = []
         print("least free indexes: {}".format(least_free_indexes))
-        print("guess index: {}, {}".format(guess_index, self.possibilities[guess_index]))
+        print("guess index: {}, {}".format(guess_index, possibilities[guess_index]))
         for value in range(1, 10):
-            if self.possibilities[guess_index][value]:
+            if possibilities[guess_index][value]:
                 guess_values.append(value)
         for value in guess_values:
             print("solve puzzle by guessing {}, {}".format(guess_index, value))
             grid[guess_index] = value
-            result = self.solve_puzzle(grid)
+            result = self.solve_puzzle(grid, possibilities)
             if result:
                 return result
         return None
@@ -125,14 +128,15 @@ class Solver(QThread):
                     # print("value: {}, last_value: {}".format(value, last_value))
         return last_value
 
-    def reduce_possibilities(self, puzzle, i):
+    def reduce_possibilities(self, puzzle, i, poss_grid):
+        possibilities = poss_grid.copy()
         row, col, square = get_related_grids(puzzle, i)
-        result = False
+        updated = False
         for value in range(1, 10):
-            if self.possibilities[i][value] and value in (row + col + square):
-                self.possibilities[i][value] = 0
-                result = True
-        return result
+            if possibilities[value] and value in (row + col + square):
+                possibilities[value] = 0
+                updated = True
+        return updated, possibilities
 
 def get_related_grids(puzzle, i):
     grid = puzzle.copy()
