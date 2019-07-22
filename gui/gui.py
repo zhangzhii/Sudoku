@@ -57,6 +57,7 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
             widget.setEnabled(True)
 
     def onClickedConfirmButton(self):
+        logger.info("start solving puzzle...")
         puzzle = []
         if DEBUG_MODE:
             for i in range(81):
@@ -76,8 +77,9 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
         self.solver.start()
 
     def onPuzzleSolved(self, answer):
-        for i in range(81):
-            self.grid[i].setText(str(answer[i]))
+        if answer:
+            for i in range(81):
+                self.grid[i].setText(str(answer[i]))
 
     def onPuzzleCreated(self, puzzle, answer):
         for i in range(81):

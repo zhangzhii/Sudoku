@@ -30,7 +30,7 @@ class Solver(QThread):
             logger.info("Sudoku solved:")
             for i in range(9):
                 logger.info(solution[i*9 : i*9+9])
-        # self.puzzle_solved_signal.emit(solution)
+        self.puzzle_solved_signal.emit(solution)
 
     def solve_puzzle(self, puzzle, poss_grid):
         grid = puzzle.copy()
