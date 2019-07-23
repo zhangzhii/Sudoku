@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QLineEdit
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from gui.sudoku_grid import Ui_MainWindow
-from algorithm.brute_force import Generator
-from algorithm.elimination import Solver
+# from algorithm.brute_force import Generator
+from algorithm.elimination import Solver, Generator
 import logging
 
 
@@ -18,7 +18,7 @@ TEST_GRID = [3, 0, 6,   5, 0, 8,   4, 0, 0,
              1, 3, 0,   0, 0, 0,   2, 5, 0,
              0, 0, 0,   0, 0, 0,   0, 7, 4,
              0, 0, 5,   2, 0, 6,   3, 0, 0]
-DEBUG_MODE = True
+DEBUG_MODE = False
 logger = logging.getLogger(__name__)
 
 
@@ -80,6 +80,8 @@ class SudokuMaster(QMainWindow, Ui_MainWindow):
         if answer:
             for i in range(81):
                 self.grid[i].setText(str(answer[i]))
+        else:
+            logger.info("impossible puzzle!")
 
     def onPuzzleCreated(self, puzzle, answer):
         for i in range(81):
