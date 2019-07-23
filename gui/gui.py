@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QLineEdit
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from gui.sudoku_grid import Ui_MainWindow
-# from algorithm.brute_force import Generator
-from algorithm.elimination import Solver, Generator
+from algorithm.elimination_solver import Solver
+from algorithm.elimination_generator import Generator
 import logging
 
 
